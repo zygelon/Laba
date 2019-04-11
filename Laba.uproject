@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{7946E02F-4E43-8C42-B5A9-5899F346D739}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Laba",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
