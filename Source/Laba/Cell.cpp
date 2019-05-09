@@ -2,22 +2,34 @@
 
 #include "Cell.h"
 #include "Materials/MaterialExpressionConstant3Vector.h"
+#include "Components/StaticMeshComponent.h"
 
 // Sets default values
 ACell::ACell()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	
+	
+	//Material = NewObject<UMaterial>();
+	
+	//static ConstructorHelpers::FObjectFinder<UMaterial> Static_material(
+	//	TEXT("Material'/Game/Cell/Cell_Material.Cell_Material'"));
 
+	//Material = Static_material.Object;
+
+	
+	//Material = CreateDefaultSubobject<UMaterial>(TEXT("Material"));
+	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Material = NewObject<UMaterial>();
-
+	SetRootComponent(Mesh);
+	//Mesh->SetMaterial(0, Material);
+	
 }
 
 void ACell::InitNum(int32 Num)
 {
 	Number = Num;
-
+	
 	//UMaterialExpressionConstant3Vector* BaseColor =NewObject<UMaterialExpressionConstant3Vector>(Material);
 
 	//BaseColor->Constant = FColor::FromHex(FString::FromInt(Number*10000));
@@ -29,6 +41,10 @@ void ACell::InitNum(int32 Num)
 void ACell::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	
+	
+	//
 }
 
 // Called every frame

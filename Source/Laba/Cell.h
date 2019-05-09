@@ -8,7 +8,7 @@
 #include "Materials/MaterialInterface.h"
 #include "Cell.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class LABA_API ACell : public AActor
 {
 	GENERATED_BODY()
@@ -17,10 +17,10 @@ public:
 	// Sets default values for this actor's properties
 	ACell();
 
-	UPROPERTY(BlueprintReadOnly,EditAnywhere ,Category="Cell")
+	UPROPERTY( VisibleAnywhere,BlueprintReadWrite  ,Category="Cell")
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Cell")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cell")
 	UMaterialInterface* Material;
 	
 
