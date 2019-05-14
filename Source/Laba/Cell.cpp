@@ -18,12 +18,25 @@ ACell::ACell()
 	//	TEXT("Material'/Game/Cell/Cell_Material.Cell_Material'"));
 
 	//Material = Static_material.Object;
-
 	
 	//Material = CreateDefaultSubobject<UMaterial>(TEXT("Material"));
 	
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(Mesh);
+
+
+	NumberAtActor = CreateDefaultSubobject<UTextRenderComponent>("TextComponent");
+	NumberAtActor->SetupAttachment(Mesh);
+
+	NumberAtActor->SetTextRenderColor(FColor::Black);
+	NumberAtActor->SetWorldSize(55.f);
+
+	NumberAtActor->SetHorizontalAlignment(EHTA_Center);
+	NumberAtActor->SetVerticalAlignment(EVRTA_TextCenter);
+
+	NumberAtActor->SetRelativeLocation(FVector(-55.f, 0.f, 0.f));
+	NumberAtActor->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
+	//NumberAtActor->SetRelativeLocation(FVector());
 	//Mesh->SetMaterial(0, Material);
 	
 }
@@ -31,6 +44,9 @@ ACell::ACell()
 void ACell::InitNum_Implementation(int32 Num)
 {
 	Number = Num;
+	
+	
+	NumberAtActor->SetText(FText::FromString(FString::FromInt(Number)));
 	
 	//UMaterialExpressionConstant3Vector* BaseColor =NewObject<UMaterialExpressionConstant3Vector>(Material);
 

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Materials/MaterialInterface.h"
+#include "Components/TextRenderComponent.h"
 #include "Cell.generated.h"
 
 UCLASS(Blueprintable, BlueprintType)
@@ -32,6 +33,9 @@ protected:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Cell")
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly, Category = "Cell")
+	UTextRenderComponent* NumberAtActor;
 
 public:	
 	// Called every frame

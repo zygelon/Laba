@@ -41,9 +41,8 @@ void AVisualManager::DestroyCells()
 		FString::Printf(TEXT("Memory Error" )));  }
 
 	for (int i = 0; i < Cells.Num(); ++i)
-	{
 		Cells[i]->Destroy();
-	}
+
 	Cells.Empty();
 }
 
