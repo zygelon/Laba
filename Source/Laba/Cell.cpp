@@ -3,6 +3,8 @@
 #include "Cell.h"
 #include "Materials/MaterialExpressionConstant3Vector.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/PrimitiveComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ACell::ACell()
@@ -26,7 +28,7 @@ ACell::ACell()
 	
 }
 
-void ACell::InitNum(int32 Num)
+void ACell::InitNum_Implementation(int32 Num)
 {
 	Number = Num;
 	
@@ -42,6 +44,9 @@ void ACell::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//FLinearColor rgb;
+	//UKismetMathLibrary::HSVToRGB_Vector(, rgb);
+	//CreateDynamicMaterialInstance(Mesh, 0, Mesh->GetMaterial(0))->SetVectorParameterValue(InputColor, rgb);
 	
 	
 	//

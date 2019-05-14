@@ -17,11 +17,10 @@ public:
 	// Sets default values for this actor's properties
 	ACell();
 
-	UPROPERTY( VisibleAnywhere,BlueprintReadWrite  ,Category="Cell")
-	UStaticMeshComponent* Mesh;
+	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cell")
-	UMaterialInterface* Material;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cell")
+	//UMaterialInterface* Material;
 	
 
 protected:
@@ -30,10 +29,14 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Cell")
 	int32 Number;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Cell")
+	UStaticMeshComponent* Mesh;
+
 public:	
 	// Called every frame
-	UFUNCTION(BlueprintCallable)
-	virtual void InitNum(int32 Num);
+	UFUNCTION(BlueprintNativeEvent)
+	 void InitNum(int32 Num);
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetNum() { return Number; }
