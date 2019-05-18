@@ -8,6 +8,13 @@
 #include "Engine/TextRenderActor.h"
 #include "VisualManager.generated.h"
 
+UENUM(BlueprintType)		//"BlueprintType" is essential to include
+enum class ESortType : uint8
+{
+	Bubble,
+	Insertion
+};
+
 UCLASS()
 class LABA_API AVisualManager : public AActor
 {
@@ -16,32 +23,63 @@ class LABA_API AVisualManager : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AVisualManager();
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
 	void SpawnCells();
 
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
 	void DestroyCells();
 
+	UPROPERTY( BlueprintReadWrite, Category = "Size")
+	int32 Height;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Size")
-		int32 Height;
+	UPROPERTY( BlueprintReadWrite, Category = "Size")
+	int32 Length;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Size")
-		int32 Length;
+	UPROPERTY( BlueprintReadWrite, Category = "CurrentSort")
+	float SortSpeed;
+
+	UFUNCTION(BlueprintCallable, Category = "CurrentSort")
+	void SetSortType(ESortType Sort) { CurrentSort = Sort; }
+
+	UFUNCTION(BlueprintCallable, Category = "CurrentSort")
+	ESortType GetSortType() { return CurrentSort; }
+	//
+	void TurnOff() {
+		APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+		if (MyPlayer != NULL)
+		{
+			MyPlayer->SetPause(false);
+			//GetWorldTimerManager().SetTimer(VTimer, [this] {MyPlayer->SetPause(false)}, false, 1.f, 1.f);
+		}
+	}
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cell")
-	TSubclassOf<class ACell> Cell_BP;
+	TSubclassOf<ACell> Cell_BP;
+
+	UPROPERTY()
+	bool bIsSorted;
+
+	UPROPERTY()
+	ESortType CurrentSort;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Cell")
-	TArray<  ACell*>Cells;
+	TArray<ACell*>Cells;
+	//////////////////////////////////////////////Sorts
+	UFUNCTION(BlueprintCallable, Category = "Visualization")
+	void BubbleSort();
+	//////////////////////////////////////////////
+	FTimerHandle VTimer;
+
+	UFUNCTION()
+	void VSwap(int32 FirstIndex, int32 SecondIndex);
+
 public:	
 	// Called every frame
 
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
-	void Draw();
+	void StartVisualization();
 };
