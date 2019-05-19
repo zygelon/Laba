@@ -48,15 +48,20 @@ void AVisualManager::SpawnCells()
 
 void AVisualManager::DestroyCells()
 {
-	bContinueSorting = false;
-	IsSortingOver.Wait();
-	//if (true) { GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
-		//FString::Printf(TEXT("Memory Error" )));  }
+	Async<void>(EAsyncExecution::Thread, [this]()
+	{
+		bContinueSorting = false;
+		IsSortingOver.Wait();
+		//if (true) { GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+			//FString::Printf(TEXT("Memory Error" )));  }
+		AsyncTask(ENamedThreads::GameThread, [this]()
+		{
+			for (int i = 0; i < Cells.Num(); ++i)
+				Cells[i]->Destroy();
 
-	for (int i = 0; i < Cells.Num(); ++i)
-		Cells[i]->Destroy();
-
-	Cells.Empty();
+			Cells.Empty();
+		});
+	});
 }
 
 void AVisualManager::BeginPlay()
@@ -91,9 +96,9 @@ void AVisualManager::StartVisualization()
 
 void AVisualManager::BubbleSort()
 {
-	for (int32 i=0; i < Cells.Num() - 1; i++)
+	for (int32 i=0; i < Cells.Num() - 1 && bContinueSorting; i++)
 	{
-		for (int32 j=0; j < Cells.Num() - i - 1; j++)
+		for (int32 j=0; j < Cells.Num() - i - 1 && bContinueSorting; j++)
 			if (Cells[j]->GetNum() > Cells[j + 1]->GetNum())
 			{
 				//GetWorldTimerManager().SetTimer(VTimer, .f, false, 20.f,);
@@ -108,7 +113,7 @@ void AVisualManager::InsertionSort()
 	int i, j;
 	for (i = 1; i < Cells.Num(); i++) {
 		j = i;
-		while (j > 0 && Cells[j - 1]->GetNum() > Cells[j]->GetNum()) {
+		while (j > 0 && Cells[j - 1]->GetNum() > Cells[j]->GetNum() && bContinueSorting) {
 			VSwap(j, j - 1);
 			j--;
 		}
@@ -120,7 +125,7 @@ void AVisualManager::QuickSort(int32 left,int32 right)
 	int32 i = left, j = right;
 	int32 pivot = Cells[(left + right) / 2]->GetNum();
 
-	while (i <= j) {
+	while (i <= j && bContinueSorting) {
 		while (Cells[i]->GetNum() < pivot)
 			i++;
 		while (Cells[j]->GetNum() > pivot)
@@ -132,15 +137,15 @@ void AVisualManager::QuickSort(int32 left,int32 right)
 		}
 	};
 
-	if (left < j)
+	if (left < j && bContinueSorting)
 		QuickSort( left, j);
-	if (i < right)
+	if (i < right && bContinueSorting)
 		QuickSort( i, right);
 }
 
 void AVisualManager::GnomeSort()
 {
-	for (int32 i = 0; i + 1 < Cells.Num(); ++i) {
+	for (int32 i = 0; i + 1 < Cells.Num() && bContinueSorting; ++i) {
 		if (Cells[i]->GetNum() > Cells[i + 1]->GetNum()) {
 			VSwap(i, i + 1);
 			if (i != 0)
