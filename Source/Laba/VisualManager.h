@@ -6,13 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "Cell.h"
 #include "Engine/TextRenderActor.h"
+#include "Future.h"
 #include "VisualManager.generated.h"
 
 UENUM(BlueprintType)		//"BlueprintType" is essential to include
 enum class ESortType : uint8
 {
 	Bubble,
-	Insertion
+	Insertion,
+	Gnome,
+	Quick
 };
 
 UCLASS()
@@ -61,7 +64,7 @@ protected:
 	TSubclassOf<ACell> Cell_BP;
 
 	UPROPERTY()
-	bool bIsSorted;
+	bool bContinueSorting;
 
 	UPROPERTY()
 	ESortType CurrentSort;
@@ -71,8 +74,18 @@ protected:
 	//////////////////////////////////////////////Sorts
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
 	void BubbleSort();
+
+	UFUNCTION(BlueprintCallable, Category = "Visualization")
+	void InsertionSort();
+
+	UFUNCTION(BlueprintCallable, Category = "Visualization")
+	void QuickSort(int32 left,int32 right);
+
+	UFUNCTION(BlueprintCallable, Category = "Visualization")
+	void GnomeSort();
 	//////////////////////////////////////////////
-	FTimerHandle VTimer;
+	//UCLASS()
+	TFuture<void>IsSortingOver;
 
 	UFUNCTION()
 	void VSwap(int32 FirstIndex, int32 SecondIndex);
