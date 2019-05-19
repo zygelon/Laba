@@ -9,64 +9,42 @@
 // Sets default values
 ACell::ACell()
 {
-	PrimaryActorTick.bCanEverTick = false;
-	
-	
-	//Material = NewObject<UMaterial>();
-	
-	//static ConstructorHelpers::FObjectFinder<UMaterial> Static_material(
-	//	TEXT("Material'/Game/Cell/Cell_Material.Cell_Material'"));
+	PrimaryActorTick.bCanEverTick = false;//вимикається виклик функції, що має кожний кадр викликатися
+	//3д модель, задається в спадкоємці BP_Cell
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));//Виклик конструктора(SetDefaultSubobject це такий конструктор)
+	SetRootComponent(Mesh);//роблю Mesh головною компонентою
 
-	//Material = Static_material.Object;
-	
-	//Material = CreateDefaultSubobject<UMaterial>(TEXT("Material"));
-	
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	SetRootComponent(Mesh);
-
-
-	NumberAtActor = CreateDefaultSubobject<UTextRenderComponent>("TextComponent");
+	//Прикріплюю номер до модельки
+	NumberAtActor = CreateDefaultSubobject<UTextRenderComponent>("TextComponent");//
 	NumberAtActor->SetupAttachment(Mesh);
 
 	NumberAtActor->SetTextRenderColor(FColor::Black);
-	NumberAtActor->SetWorldSize(55.f);
+	NumberAtActor->SetWorldSize(55.f);//обраний методом тика як оптимальний
 
 	NumberAtActor->SetHorizontalAlignment(EHTA_Center);
 	NumberAtActor->SetVerticalAlignment(EVRTA_TextCenter);
 
-	NumberAtActor->SetRelativeLocation(FVector(-55.f, 0.f, 0.f));
-	NumberAtActor->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));
+	NumberAtActor->SetRelativeLocation(FVector(-55.f, 0.f, 0.f));//методом тику, приліпив на куб
+	NumberAtActor->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));//щоб зеркально не були цифри
 	//NumberAtActor->SetRelativeLocation(FVector());
 	//Mesh->SetMaterial(0, Material);
 	
 }
-
+//Implementation означає, що метод може перевизначатись в спадкоємці - блупринті
 void ACell::InitNum_Implementation(int32 Num)
-{
+{//очевидно
 	Number = Num;
 	
-	
+	//Даю значення тексту, що показує номер елементу
 	NumberAtActor->SetText(FText::FromString(FString::FromInt(Number)));
-	
-	//UMaterialExpressionConstant3Vector* BaseColor =NewObject<UMaterialExpressionConstant3Vector>(Material);
-
-	//BaseColor->Constant = FColor::FromHex(FString::FromInt(Number*10000));
-
-	//Material->
 }
 
-// Called when the game starts or when spawned
+//робить нічого
 void ACell::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	//FLinearColor rgb;
-	//UKismetMathLibrary::HSVToRGB_Vector(, rgb);
-	//CreateDynamicMaterialInstance(Mesh, 0, Mesh->GetMaterial(0))->SetVectorParameterValue(InputColor, rgb);
-	
-	
-	//
+
 }
 
-// Called every frame
+
 
