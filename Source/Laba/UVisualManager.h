@@ -52,7 +52,12 @@ public:
 	ESortType GetSortType() { return CurrentSort; }//Повертає вид сортування
 
 protected:
-	
+	UPROPERTY(BlueprintReadOnly, Category = "Stats")
+	int32 SwapsNum;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Stats")
+	int32 ComparesNum;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cell")
 	TSubclassOf<ACell> Cell_BP;//Cell_BP буде містити спадкоємця від ACell, це вказівник(здається)
 
@@ -81,6 +86,9 @@ protected:
 	//////////////////////////////////////////////
 
 	TFuture<void>IsSortingOver;//Потрібно, щоб припинити сортування, під час переходу до MainMenu
+
+	//UFUNCTION()
+	//bool operator>(ACell* First,ACell* Second) { ComparesNum++; return First->GetNum()> Second->GetNum(); }
 
 	UFUNCTION()
 	void VSwap(int32 FirstIndex, int32 SecondIndex);//тут вся суть візуалізації та страшний код. VSwap зімнює розташування елементів в Cells та міняє хз Location на сцені

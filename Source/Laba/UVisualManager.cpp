@@ -33,6 +33,7 @@ UVisualManager* UVisualManager::GetVisualManager()
 //тут потрібно позбутися від магічних чисел, але я не встиг:(
 void UVisualManager::SpawnCells()
 {
+	ComparesNum = SwapsNum = 0;
 	FVector SpawnPosition(390.000000, -240.000000,  130.000000);//Методом тику знайдена зручне місце для початку спавна
 	for (int i = 0; i < Height;++i , SpawnPosition+=FVector(0,-25.f*Length,-25.f))//Звиг по вертикалі
 		for (int j = 0; j < Length; ++j, SpawnPosition+=FVector(0,25.f,0))//Здвиг по горизонталі
@@ -168,7 +169,7 @@ void UVisualManager::VSwap(int32 FirstIndex,  int32 SecondIndex)
 	FPlatformProcess::Sleep(SortSpeed);
 	//Чекаємо поки Головний потік закінчить свої справи, бо на малих затримках він може працювати повільніше ніж цей потік і будуть ГІГАНСЬКІ проблеми
 	IsSwapped.Wait();
+	++SwapsNum;
  	Cells.Swap(FirstIndex, SecondIndex);//Свап елементів в масиві
-	
 }
 
