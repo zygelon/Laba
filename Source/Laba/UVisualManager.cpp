@@ -16,6 +16,7 @@ UVisualManager::UVisualManager()
 		TEXT("Class'/Game/Cell/BP_Cell.BP_Cell_C'"));
 	if(Cell_BP_temp.Object)
 		Cell_BP = Cell_BP_temp.Object;
+	//IncreaseCompNumSignature.Bind()
 	//шукає BP_Cell та якщо знаходить, задає Cell_BP
 }
 
@@ -92,23 +93,20 @@ void UVisualManager::StartVisualization()
 
 void UVisualManager::BubbleSort()
 {
-	for (int32 i=0; i < Cells.Num() - 1 && bContinueSorting; i++)
+	for (int32 i=0; Less(i , Cells.Num() - 1) && bContinueSorting; i++)
 	{
-		for (int32 j=0; j < Cells.Num() - i - 1 && bContinueSorting; j++)
-			if (Cells[j]->GetNum() > Cells[j + 1]->GetNum())
-			{
-				//GetWorldTimerManager().SetTimer(VTimer, .f, false, 20.f,);
+		for (int32 j=0; Less(j , Cells.Num() - i - 1) && bContinueSorting; j++)
+			if (More( Cells[j] , Cells[j + 1]))
 				VSwap(j, j + 1);
-			}
 	}
 }
 
 void UVisualManager::InsertionSort()
 {
 	int i, j;
-	for (i = 1; i < Cells.Num(); i++) {
+	for (i = 1; Less(i,Cells.Num()); i++) {
 		j = i;
-		while (j > 0 && Cells[j - 1]->GetNum() > Cells[j]->GetNum() && bContinueSorting) {
+		while (More(j,0) && More(Cells[j - 1], Cells[j]) && bContinueSorting) {
 			VSwap(j, j - 1);
 			j--;
 		}
@@ -120,28 +118,28 @@ void UVisualManager::QuickSort(int32 left,int32 right)
 	int32 i = left, j = right;
 	int32 pivot = Cells[(left + right) / 2]->GetNum();
 
-	while (i <= j && bContinueSorting) {
-		while (Cells[i]->GetNum() < pivot)
+	while (LessEq(i,j) && bContinueSorting) {
+		while (Less( Cells[i]->GetNum(), pivot))
 			i++;
-		while (Cells[j]->GetNum() > pivot)
+		while (More( Cells[j]->GetNum(), pivot))
 			j--;
-		if (i <= j) {
+		if (LessEq(i,j)) {
 			VSwap(i, j);
 			i++;
 			j--;
 		}
 	};
 
-	if (left < j && bContinueSorting)
+	if (Less(left,j)  && bContinueSorting)
 		QuickSort( left, j);
-	if (i < right && bContinueSorting)
+	if (Less(i, right) && bContinueSorting)
 		QuickSort( i, right);
 }
 //Схожа на Insertion sort але трохи відрізняється
 void UVisualManager::GnomeSort()
 {
-	for (int32 i = 0; i + 1 < Cells.Num() && bContinueSorting; ++i) {
-		if (Cells[i]->GetNum() > Cells[i + 1]->GetNum()) {
+	for (int32 i = 0; Less(i + 1 , Cells.Num()) && bContinueSorting; ++i) {
+		if (More(Cells[i],  Cells[i + 1])) {
 			VSwap(i, i + 1);
 			if (i != 0)
 				i -= 2; 

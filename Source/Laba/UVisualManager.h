@@ -9,6 +9,8 @@
 #include "Future.h"
 #include "UVisualManager.generated.h"
 
+
+
 UENUM(BlueprintType)		//Типи сортувань, що використовуються
 enum class ESortType : uint8
 {
@@ -52,6 +54,8 @@ public:
 	ESortType GetSortType() { return CurrentSort; }//Повертає вид сортування
 
 protected:
+	
+
 	UPROPERTY(BlueprintReadOnly, Category = "Stats")
 	int32 SwapsNum;
 
@@ -84,17 +88,23 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
 	void GnomeSort();
 	//////////////////////////////////////////////
+	bool More(ACell* first, ACell* second) { ComparesNum++; return first->GetNum() > second->GetNum(); }
+	bool More(int32 first, int32 second) { ComparesNum++; return first > second; }
+	bool Less(ACell* first, ACell* second) { ComparesNum++;return first->GetNum() < second->GetNum(); }
+	bool Less(int32 first, int32 second) { ComparesNum++; return first < second; }
+	bool LessEq(ACell* first, ACell* second) { ComparesNum++; return first->GetNum() <= second->GetNum(); }
+	bool LessEq(int32 first, int32 second) { ComparesNum++; return first <= second; }
+	bool MoreEq(ACell* first, ACell* second) { ComparesNum++; return first->GetNum() >= second->GetNum(); }
+	bool MoreEq(int32 first, int32 second) { ComparesNum++; return first >= second; }
+	//////////////////////////////////////////////
 
 	TFuture<void>IsSortingOver;//Потрібно, щоб припинити сортування, під час переходу до MainMenu
-
-	//UFUNCTION()
-	//bool operator>(ACell* First,ACell* Second) { ComparesNum++; return First->GetNum()> Second->GetNum(); }
+	
 
 	UFUNCTION()
 	void VSwap(int32 FirstIndex, int32 SecondIndex);//тут вся суть візуалізації та страшний код. VSwap зімнює розташування елементів в Cells та міняє хз Location на сцені
 
 public:	
-
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
 	void StartVisualization();//З цього починається вся візуалізація
 private:

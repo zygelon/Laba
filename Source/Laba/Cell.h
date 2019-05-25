@@ -43,6 +43,6 @@ public:
 	 void InitNum(int32 Num);//Присоює Number=Num, розширюється в BP_Cell
 
 	UFUNCTION(BlueprintCallable)
-	int32 GetNum() { return Number; }//Просто гетер :)
+	int32 const GetNum() { return Number; }//Просто гетер :)
 
 };
