@@ -16,8 +16,9 @@ UVisualManager::UVisualManager()
 		TEXT("Class'/Game/Cell/BP_Cell.BP_Cell_C'"));
 	if(Cell_BP_temp.Object)
 		Cell_BP = Cell_BP_temp.Object;
-	//IncreaseCompNumSignature.Bind()
 	//шукає BP_Cell та якщо знаходить, задає Cell_BP
+
+	bIsSorted = false;
 }
 
 
@@ -50,6 +51,7 @@ void UVisualManager::SpawnCells()
 void UVisualManager::DestroyCells()
 {//можна я ось це все поясню в живу, тут була проблема, рішення інше не знайшов
 	//Створюється доп потік, що чекає, поки припинеться сортування(основний не можна використовувати, він там частково приймає участь, інакше підвисне)
+	bIsSorted = false;
 	Async<void>(EAsyncExecution::Thread, [this]()
 	{
 		bContinueSorting = false;//зупиняємо сортування
@@ -70,6 +72,8 @@ void UVisualManager::DestroyCells()
 //Визначається, що за сортування, та запускається доп. потік, для того, щоб ми бачили вивід і все не застигло
 void UVisualManager::StartVisualization()
 {
+	//IsSortingOver = false;
+	bIsSorted = false;
 	bContinueSorting = true;
 	IsSortingOver = Async<void>(EAsyncExecution::Thread, [this]()
 	{
@@ -99,6 +103,7 @@ void UVisualManager::BubbleSort()
 			if (More( Cells[j] , Cells[j + 1]))
 				VSwap(j, j + 1);
 	}
+	if (bContinueSorting) bIsSorted = true;
 }
 
 void UVisualManager::InsertionSort()
@@ -111,6 +116,7 @@ void UVisualManager::InsertionSort()
 			j--;
 		}
 	}
+	if (bContinueSorting) bIsSorted = true;
 }
 
 void UVisualManager::QuickSort(int32 left,int32 right)
@@ -134,6 +140,7 @@ void UVisualManager::QuickSort(int32 left,int32 right)
 		QuickSort( left, j);
 	if (Less(i, right) && bContinueSorting)
 		QuickSort( i, right);
+	if (bContinueSorting && left==0 && right==Cells.Num()-1) bIsSorted = true;
 }
 //Схожа на Insertion sort але трохи відрізняється
 void UVisualManager::GnomeSort()
@@ -145,6 +152,7 @@ void UVisualManager::GnomeSort()
 				i -= 2; 
 		}
 	}
+	if (bContinueSorting) bIsSorted = true;
 }
 //Трохи страшний код. Мій VSwap, щоб змінювати позиції екторів на екрані
 void UVisualManager::VSwap(int32 FirstIndex,  int32 SecondIndex)

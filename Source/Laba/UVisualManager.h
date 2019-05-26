@@ -26,6 +26,7 @@ UCLASS()
 class LABA_API UVisualManager : public UObject
 {
 	GENERATED_BODY()
+	friend class AExasss;
 public:
 	UFUNCTION(BlueprintPure, Category = "Singleton")
 	static UVisualManager* GetVisualManager(); //Сінглтон, просто
@@ -64,6 +65,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cell")
 	TSubclassOf<ACell> Cell_BP;//Cell_BP буде містити спадкоємця від ACell, це вказівник(здається)
+
+	UPROPERTY()
+	bool bIsSorted;
 
 	UPROPERTY()
 	bool bContinueSorting;//Продовжувати сортування, чи припинити, потрібно для зупинення функцій сортування
