@@ -1,5 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/**
+
+  Cell.cpp
+
+  Purpose: sets values for cells
+
+ */
+
 #include "Cell.h"
 #include "Materials/MaterialExpressionConstant3Vector.h"
 #include "Components/StaticMeshComponent.h"
@@ -9,37 +17,37 @@
 // Sets default values
 ACell::ACell()
 {
-	PrimaryActorTick.bCanEverTick = false;//вимикається виклик функції, що має кожний кадр викликатися
-	//3д модель, задається в спадкоємці BP_Cell
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));//Виклик конструктора(SetDefaultSubobject це такий конструктор)
-	SetRootComponent(Mesh);//роблю Mesh головною компонентою
+	PrimaryActorTick.bCanEverTick = false;//the function call that each frame is called is turned off
+	//3d model, given in the heir BP_Cell
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));//call of constructor (SetDefaultSubobject this is a constructor)
+	SetRootComponent(Mesh);//making Mesh the main component
 
-	//Прикріплюю номер до модельки
+	//Attaching a number to model
 	NumberAtActor = CreateDefaultSubobject<UTextRenderComponent>("TextComponent");//
 	NumberAtActor->SetupAttachment(Mesh);
 
 	NumberAtActor->SetTextRenderColor(FColor::Black);
-	NumberAtActor->SetWorldSize(55.f);//обраний методом тика як оптимальний
+	NumberAtActor->SetWorldSize(55.f);//choosed as optimal
 
 	NumberAtActor->SetHorizontalAlignment(EHTA_Center);
 	NumberAtActor->SetVerticalAlignment(EVRTA_TextCenter);
 
-	NumberAtActor->SetRelativeLocation(FVector(-55.f, 0.f, 0.f));//методом тику, приліпив на куб
-	NumberAtActor->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));//щоб зеркально не були цифри
+	NumberAtActor->SetRelativeLocation(FVector(-55.f, 0.f, 0.f));//dipped on cube
+	NumberAtActor->SetRelativeRotation(FRotator(0.f, 180.f, 0.f));//to not mirror the numbers
 	//NumberAtActor->SetRelativeLocation(FVector());
 	//Mesh->SetMaterial(0, Material);
 	
 }
-//Implementation означає, що метод може перевизначатись в спадкоємці - блупринті
+//Implementation means that the method can be redefined in the heir - blueprint
 void ACell::InitNum_Implementation(int32 Num)
 {//очевидно
 	Number = Num;
 	
-	//Даю значення тексту, що показує номер елементу
+	//I give the value of the text that shows the element number
 	NumberAtActor->SetText(FText::FromString(FString::FromInt(Number)));
 }
 
-//робить нічого
+//makes nothing
 void ACell::BeginPlay()
 {
 	Super::BeginPlay();

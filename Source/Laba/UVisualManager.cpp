@@ -1,5 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+
+/**
+
+  UVisualManager.cpp
+
+  Purpose: file with main functions
+
+ */
+
 #include "UVisualManager.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
@@ -7,7 +16,7 @@
 #include "Async.h"
 #include "Future.h"
 #include "ThreadManager.h"
-//просто макрос для більш зручного Debug
+//just a macros for more comfortable Debug
 #define D(x) if(GEngine){GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, TEXT(x));}
 
 UVisualManager::UVisualManager() 
@@ -16,13 +25,13 @@ UVisualManager::UVisualManager()
 		TEXT("Class'/Game/Cell/BP_Cell.BP_Cell_C'"));
 	if(Cell_BP_temp.Object)
 		Cell_BP = Cell_BP_temp.Object;
-	//шукає BP_Cell та якщо знаходить, задає Cell_BP
+	//searchs BP_Cell and if finds, sets Cell_BP
 
 	bIsSorted = false;
 }
 
 
-//Singleton, він частково задається кодом, а частково в редакторі рушія
+//Singleton, it is partially set by the code, and partly by the editor of the propeller
 UVisualManager* UVisualManager::GetVisualManager()
 {
 	UVisualManager* DataInstance = Cast<UVisualManager>(GEngine->GameSingleton);
@@ -32,7 +41,7 @@ UVisualManager* UVisualManager::GetVisualManager()
 
 	return DataInstance;
 }
-//тут потрібно позбутися від магічних чисел, але я не встиг:(
+
 void UVisualManager::SpawnCells()
 {
 	ComparesNum = SwapsNum = 0;
@@ -40,24 +49,24 @@ void UVisualManager::SpawnCells()
 	for (int i = 0; i < Height;++i , SpawnPosition+=FVector(0,-25.f*Length,-25.f))//Звиг по вертикалі
 		for (int j = 0; j < Length; ++j, SpawnPosition+=FVector(0,25.f,0))//Здвиг по горизонталі
 		{
-			//Тут відбувається спаун клітин, та додавання їх до масиву Cells. Ну і задання числа елемента(рандом)
+			//Here cells are spawning and added to array Cells. And assignment of nums (rand)
 			ACell* SpawnedCell = GEngine->GameViewport->GetWorld()->SpawnActor<ACell>(Cell_BP, SpawnPosition, FRotator::ZeroRotator);
-			SpawnedCell->InitNum(FMath::RandRange(0,360));//Зручно для HSV, але не має значення до скількох
+			SpawnedCell->InitNum(FMath::RandRange(0,360));//Comfortable for HSV, but it does not matter how many
 
 			Cells.Add(SpawnedCell);
 		}
 }
-//Знищення клітин. Обережно дуже страшний код.
+//Destruction of cells
 void UVisualManager::DestroyCells()
 {//можна я ось це все поясню в живу, тут була проблема, рішення інше не знайшов
-	//Створюється доп потік, що чекає, поки припинеться сортування(основний не можна використовувати, він там частково приймає участь, інакше підвисне)
+	//An additional stream is created that waits until the sorting is stopped (the main one can not be used, it partially participates there, otherwise it is elevated)
 	bIsSorted = false;
 	Async<void>(EAsyncExecution::Thread, [this]()
 	{
-		bContinueSorting = false;//зупиняємо сортування
-		IsSortingOver.Wait();//чекаємо поки зупинеться
+		bContinueSorting = false;//stopping sorting
+		IsSortingOver.Wait();//waiting to stop
 		
-		AsyncTask(ENamedThreads::GameThread, [this]()//тільки головний потік може редагувати Анріаловські Сутності
+		AsyncTask(ENamedThreads::GameThread, [this]()//only main flow can edit Unreal essences
 		{
 			for (int i = 0; i < Cells.Num(); ++i)
 				Cells[i]->Destroy();
@@ -69,7 +78,7 @@ void UVisualManager::DestroyCells()
 
 
 
-//Визначається, що за сортування, та запускається доп. потік, для того, щоб ми бачили вивід і все не застигло
+//It is determined which sorting it is, and the additional stream is started, in order that we see the output and everything is not frozen
 void UVisualManager::StartVisualization()
 {
 	//IsSortingOver = false;
@@ -142,7 +151,7 @@ void UVisualManager::QuickSort(int32 left,int32 right)
 		QuickSort( i, right);
 	if (bContinueSorting && left==0 && right==Cells.Num()-1) bIsSorted = true;
 }
-//Схожа на Insertion sort але трохи відрізняється
+//Like Insertion sort but a bit different
 void UVisualManager::GnomeSort()
 {
 	for (int32 i = 0; Less(i + 1 , Cells.Num()) && bContinueSorting; ++i) {
@@ -154,7 +163,7 @@ void UVisualManager::GnomeSort()
 	}
 	if (bContinueSorting) bIsSorted = true;
 }
-//Трохи страшний код. Мій VSwap, щоб змінювати позиції екторів на екрані
+//My VSwap, to change the position of the vectors on the screen
 void UVisualManager::VSwap(int32 FirstIndex,  int32 SecondIndex)
 {
 	//Проблема в тому, що я НІЯК не можу дізнатися влаштовуваними методами, коли AsyncTask закінчиться, довелося створювати свої TFuture і TPromise
@@ -164,16 +173,16 @@ void UVisualManager::VSwap(int32 FirstIndex,  int32 SecondIndex)
 
 	//Тільки головний потік може редагувати Анріаловські Сутності
 	AsyncTask(ENamedThreads::GameThread, [&](){
-		//Swap позицій акторів
+		//Swap actors positions
 		FVector temp_loc = Cells[FirstIndex]->GetActorLocation();
 		Cells[FirstIndex]->SetActorLocation(Cells[SecondIndex]->GetActorLocation());
 		Cells[SecondIndex]->SetActorLocation(temp_loc);
 
 		SetIsSwapped.SetValue();
 	});
-	//Затримка, що задається за допомогою SortSpeed, назва трохи некоректна
+	//Delay with help of SortSpeed
 	FPlatformProcess::Sleep(SortSpeed);
-	//Чекаємо поки Головний потік закінчить свої справи, бо на малих затримках він може працювати повільніше ніж цей потік і будуть ГІГАНСЬКІ проблеми
+	//We are waiting for the Main flow to finish its business, because in small delays, it can work slower than this flow and there will be GIGANT problems
 	IsSwapped.Wait();
 	++SwapsNum;
  	Cells.Swap(FirstIndex, SecondIndex);//Свап елементів в масиві

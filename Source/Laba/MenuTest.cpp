@@ -1,5 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/**
+
+  MenuTest.cpp
+
+  Purpose: tests spawn func
+
+ */
 
 #include "MenuTest.h"
 #include "UVisualManager.h"

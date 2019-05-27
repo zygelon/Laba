@@ -1,5 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/**
+
+  LengthTest.cpp
+
+  Purpose: tests length func
+
+ */
 
 #include "LengthTest.h"
 #include "UVisualManager.h"

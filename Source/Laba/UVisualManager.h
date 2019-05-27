@@ -1,5 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/**
+
+  UVisualManager.h
+
+  Purpose: file with main functions
+
+ */
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,7 +19,7 @@
 
 
 
-UENUM(BlueprintType)		//Типи сортувань, що використовуються
+UENUM(BlueprintType)		//types of sorts
 enum class ESortType : uint8
 {
 	Bubble,
@@ -20,39 +28,67 @@ enum class ESortType : uint8
 	Quick
 };
 
-//Це дуже страшний клас і було б добре розбити його хоча б на 2 класи, але часу мало, а я один :(
+//very terrible class
 
 UCLASS()
 class LABA_API UVisualManager : public UObject
 {
 	GENERATED_BODY()
 	friend class AExasss;
+	friend class ADestroyTest;
+	friend class AMenuTest;
+	friend class ALengthTest;
 public:
 	UFUNCTION(BlueprintPure, Category = "Singleton")
-	static UVisualManager* GetVisualManager(); //Сінглтон, просто
+	static UVisualManager* GetVisualManager(); //Singletone
 	
 public:	
 	
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
-	void SpawnCells();//Створює клітини, рівно стільки, скільки задав користувач.
+	/*
+	*Creates cells, exactly as much as the user has specified.
+	*
+	*@brief SpawnCells
+	*/
+	void SpawnCells();
 
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
-	void DestroyCells();//Знищує всі клітини, виконується при поверненні в меню
+	/*
+	*Destroys all cells, executed when returning to the menu.
+	*
+	*@brief DestroyCells
+	*/
+	void DestroyCells();
 
 	UPROPERTY( BlueprintReadWrite, Category = "Size")
-	int32 Height;//Очевидно, кількість клітин по висоті
+	int32 Height;//Obviously, the number of cells in height
 
 	UPROPERTY( BlueprintReadWrite, Category = "Size")
-	int32 Length;//теж саме але по горизонталі
+	int32 Length;//same but horizontally
 
 	UPROPERTY( BlueprintReadWrite, Category = "CurrentSort")
-	float SortSpeed;//Очевидно
+	/*
+	*Obvious
+	*
+	*@brief SortSpeed
+	*/
+	float SortSpeed;
 
 	UFUNCTION(BlueprintCallable, Category = "CurrentSort")
-	void SetSortType(ESortType Sort) { CurrentSort = Sort; }//Задає вид сортування для класу
+	/*
+	*Specifies the sort type for the class
+	*
+	*@brief SetSortType
+	*/
+	void SetSortType(ESortType Sort) { CurrentSort = Sort; }
 
 	UFUNCTION(BlueprintCallable, Category = "CurrentSort")
-	ESortType GetSortType() { return CurrentSort; }//Повертає вид сортування
+	/*
+	*returns the type of sort
+	*
+	*@brief GetSortType
+	*/
+	ESortType GetSortType() { return CurrentSort; }
 
 protected:
 	
@@ -64,20 +100,25 @@ protected:
 	int32 ComparesNum;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cell")
-	TSubclassOf<ACell> Cell_BP;//Cell_BP буде містити спадкоємця від ACell, це вказівник(здається)
+	TSubclassOf<ACell> Cell_BP;//Cell_BP will contain heir from ACell, this is a pointer
 
 	UPROPERTY()
 	bool bIsSorted;
 
 	UPROPERTY()
-	bool bContinueSorting;//Продовжувати сортування, чи припинити, потрібно для зупинення функцій сортування
+	/*
+	*To continue sorting, or to stop, you need to stop the sorting functions
+	*
+	*@brief bContinueSorting
+	*/
+	bool bContinueSorting;
 
 	UPROPERTY()
-	ESortType CurrentSort;//поточна сортировка
+	ESortType CurrentSort;//current sort
 
 	UPROPERTY(BlueprintReadOnly, Category = "Cell")
-	TArray<ACell*>Cells;// Тут лежать всі клітини BP_Cell, які за допомогою динамічного
-	//поліморфізму(або як це назвати) стають ACell
+	TArray<ACell*>Cells;// Here are all the cells BP_Cell, which using dynamic
+	//polymorphism becoming ACell
 
 	//////////////////////////////////////////////Sorts
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
@@ -102,15 +143,15 @@ protected:
 	bool MoreEq(int32 first, int32 second) { ComparesNum++; return first >= second; }
 	//////////////////////////////////////////////
 
-	TFuture<void>IsSortingOver;//Потрібно, щоб припинити сортування, під час переходу до MainMenu
+	TFuture<void>IsSortingOver;//Required to stop sorting when moving to MainMenu
 	
 
 	UFUNCTION()
-	void VSwap(int32 FirstIndex, int32 SecondIndex);//тут вся суть візуалізації та страшний код. VSwap зімнює розташування елементів в Cells та міняє хз Location на сцені
+	void VSwap(int32 FirstIndex, int32 SecondIndex);//VSwap changes the location of the elements in Cells and changes their Location on scene
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
-	void StartVisualization();//З цього починається вся візуалізація
+	void StartVisualization();//starting of visualization
 private:
 	UVisualManager();
 };

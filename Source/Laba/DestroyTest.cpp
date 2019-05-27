@@ -1,5 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+/**
+
+  DestroyTest.cpp
+
+  Purpose: tests destroy func
+
+ */
+
 
 #include "DestroyTest.h"
 #include "UVisualManager.h"
@@ -22,7 +30,7 @@ void ADestroyTest::StartTest()
 void ADestroyTest::Tick(float DeltaSeconds)
 {
 	if (!VisManag) FinishTest(EFunctionalTestResult::Error, "VisManag NULLPTR");
-	if (VisManag->Cell_BP)
+	if (VisManag->IsSortingOver)
 	{
 		if ((IsDestroyed())) FinishTest(EFunctionalTestResult::Succeeded, "Destroyed");
 		else FinishTest(EFunctionalTestResult::Failed, "Not Destroyed");
