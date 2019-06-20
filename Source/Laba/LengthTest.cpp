@@ -44,7 +44,7 @@ void ALengthTest::PrepareTest()
 
 bool ALengthTest::Length()
 {
-	if (VisManag->Length = UIMem->SetLength())
+	if (VisManag->Length == UIMem->GetLength())
 		return true;
 	else
 		return false;

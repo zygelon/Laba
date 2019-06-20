@@ -36,18 +36,34 @@ protected:
 public:	
 	UFUNCTION(BlueprintCallable)
 	/*
+	* gets height
+	*
+	* @brief GetHeight
+	*/
+	int32 GetHeight() { return Height; }
+
+	UFUNCTION(BlueprintCallable)
+	/*
+	* gets length
+	*
+	* @brief GetLength
+	*/
+	int32 GetLength() { return Length; }
+
+	UFUNCTION(BlueprintCallable)
+	/*
 	* sets height
 	*
 	* @brief SetHeight
 	*/
-	void SetHeight( int32 _Length) { this->Length = _Length; }
+	void SetHeight( int32 _Height) { this->Height = _Height; }
 	UFUNCTION(BlueprintCallable)
 	/*
 	* sets length
 	*
 	* @brief SetLength
 	*/
-	void SetLength( int32 _Height) { this->Height = _Height; }
+	void SetLength( int32 _Length) { this->Length = _Length; }
 	UFUNCTION(BlueprintCallable)
 	/*
 	* sets Sort speed

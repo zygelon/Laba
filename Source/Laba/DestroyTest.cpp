@@ -30,7 +30,7 @@ void ADestroyTest::StartTest()
 void ADestroyTest::Tick(float DeltaSeconds)
 {
 	if (!VisManag) FinishTest(EFunctionalTestResult::Error, "VisManag NULLPTR");
-	if (VisManag->IsSortingOver)
+	if (VisManag->bIsSorted)
 	{
 		if ((IsDestroyed())) FinishTest(EFunctionalTestResult::Succeeded, "Destroyed");
 		else FinishTest(EFunctionalTestResult::Failed, "Not Destroyed");

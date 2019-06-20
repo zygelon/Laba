@@ -25,7 +25,9 @@ enum class ESortType : uint8
 	Bubble,
 	Insertion,
 	Gnome,
-	Quick
+	Quick,
+	Merge,
+	Bucket
 };
 
 //very terrible class
@@ -94,7 +96,7 @@ protected:
 	
 
 	UPROPERTY(BlueprintReadOnly, Category = "Stats")
-	int32 SwapsNum;
+	int32 AssignmentsNum;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Stats")
 	int32 ComparesNum;
@@ -132,6 +134,12 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
 	void GnomeSort();
+
+	UFUNCTION(BlueprintCallable, Category = "Visualization")
+	void MergeSort(int32 l, int32 r);
+
+	UFUNCTION(BlueprintCallable, Category = "Visualization")
+	void BucketSort();
 	//////////////////////////////////////////////
 	bool More(ACell* first, ACell* second) { ComparesNum++; return first->GetNum() > second->GetNum(); }
 	bool More(int32 first, int32 second) { ComparesNum++; return first > second; }
@@ -141,14 +149,20 @@ protected:
 	bool LessEq(int32 first, int32 second) { ComparesNum++; return first <= second; }
 	bool MoreEq(ACell* first, ACell* second) { ComparesNum++; return first->GetNum() >= second->GetNum(); }
 	bool MoreEq(int32 first, int32 second) { ComparesNum++; return first >= second; }
+	bool NotEq(int32 first, int32 second) { ComparesNum++; return first != second; }
+	bool Equal(int32 first, int32 second) { ComparesNum++; return first == second; }
 	//////////////////////////////////////////////
 
 	TFuture<void>IsSortingOver;//Required to stop sorting when moving to MainMenu
 	
+	UFUNCTION()
+	void DSwap(int32& a, int32& b);
 
 	UFUNCTION()
 	void VSwap(int32 FirstIndex, int32 SecondIndex);//VSwap changes the location of the elements in Cells and changes their Location on scene
-
+	
+	UFUNCTION()
+	void VAssign(int32 Index, int32 Val);
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Visualization")
 	void StartVisualization();//starting of visualization

@@ -27,6 +27,8 @@ UVisualManager::UVisualManager()
 		Cell_BP = Cell_BP_temp.Object;
 	//searchs BP_Cell and if finds, sets Cell_BP
 
+	ComparesNum = AssignmentsNum = 0;
+
 	bIsSorted = false;
 }
 
@@ -44,7 +46,7 @@ UVisualManager* UVisualManager::GetVisualManager()
 
 void UVisualManager::SpawnCells()
 {
-	ComparesNum = SwapsNum = 0;
+	ComparesNum = ComparesNum = 0;
 	FVector SpawnPosition(390.000000, -240.000000,  130.000000);//Методом тику знайдена зручне місце для початку спавна
 	for (int i = 0; i < Height;++i , SpawnPosition+=FVector(0,-25.f*Length,-25.f))//Звиг по вертикалі
 		for (int j = 0; j < Length; ++j, SpawnPosition+=FVector(0,25.f,0))//Здвиг по горизонталі
@@ -99,6 +101,12 @@ void UVisualManager::StartVisualization()
 			break;
 		case ESortType::Quick:
 			QuickSort(0, Cells.Num() - 1);
+			break;
+		case ESortType::Merge:
+			MergeSort(0, Cells.Num() - 1);
+			break;
+		case ESortType::Bucket:
+			BucketSort();
 			break;
 		}
 	});
@@ -157,12 +165,123 @@ void UVisualManager::GnomeSort()
 	for (int32 i = 0; Less(i + 1 , Cells.Num()) && bContinueSorting; ++i) {
 		if (More(Cells[i],  Cells[i + 1])) {
 			VSwap(i, i + 1);
-			if (i != 0)
+			if (NotEq(i,0))
 				i -= 2; 
 		}
 	}
 	if (bContinueSorting) bIsSorted = true;
 }
+
+void UVisualManager::MergeSort(int32 l, int32 r)
+{
+	auto merge = [&](int32 l, int32 m, int32 r){
+		int32 i, j, k;
+		int32 n1 = m - l + 1;
+		int32 n2 = r - m;
+
+		TArray<int32>L, R;
+		L.Init(-1,n1); R.Init(-1,n2);
+		
+		for (i = 0;Less(i,n1) && bContinueSorting; i++)
+			L[i] = Cells[l + i]->GetNum();
+		for (j = 0;Less(j,n2) && bContinueSorting; j++)
+			R[j] = Cells[m + 1 + j]->GetNum();
+		i = 0;  j = 0;  k = l; 
+
+		while (Less(i,n1) && Less(j,n2) && bContinueSorting)
+		{
+			if (LessEq(L[i],R[j]))
+			{
+				VAssign(k, L[i]);
+				i++;
+			}
+			else
+			{
+				VAssign(k, R[j]);
+				j++;
+			}
+			k++;
+		}
+		while (Less(i,n1) && bContinueSorting)
+		{
+			VAssign(k, L[i]);
+			i++;
+			k++;
+		}
+		while (Less(j,n2) && bContinueSorting)
+		{
+			VAssign(k, R[j]);
+			j++;
+			k++;
+		}
+	};
+
+	if (Less( l , r))
+	{
+		// Same as (l+r)/2, but avoids overflow for 
+		// large l and h 
+		int32 m = l + (r - l) / 2;
+
+		// Sort first and second halves 
+		if (bContinueSorting)
+		{
+			MergeSort(l, m);
+			MergeSort(m + 1, r);
+
+			merge(l, m, r);
+		}
+	}
+	if (bContinueSorting) bIsSorted = true;
+}
+
+void UVisualManager::BucketSort()
+{
+	/////////////////////////////////////
+	const float All_Num = 370;
+	
+	auto GnSort = [&](TArray<int32>arr){
+		for (int32 i = 0; Less(i + 1, arr.Num()) && bContinueSorting; ++i) {
+			if (More(arr[i], arr[i + 1])) {
+				DSwap(arr[i], arr[i + 1]);
+				if (NotEq(i,0))
+					i -= 2;
+			}
+		}
+	};
+	/////////////////////////////////////
+
+	TArray< TArray<int32> >b;
+	b.Init(TArray<int32>(), Cells.Num());
+	
+	for (int32 i = 0; Less( i , Cells.Num()) && bContinueSorting; i++)
+	{
+		int32 bi = Cells.Num() * (float(Cells[i]->GetNum())/All_Num); // Index in bucket 
+		b[bi].Push(Cells[i]->GetNum());
+	}
+
+	for (int32 i = 0;Less(i,Cells.Num()) && bContinueSorting; i++)
+		GnSort(b[i]);
+
+	// 4) Concatenate all buckets into arr[] 
+	int32 index = 0;
+	for (int32 i = 0;Less(i,Cells.Num()) && bContinueSorting; i++)
+		for (int32 j = 0; Less(j,b[i].Num()) && bContinueSorting; j++)
+		{
+			VAssign(index, b[i][j]);
+			//Cells[index] = b[i][j];
+			++index;
+		}
+	if (bContinueSorting) bIsSorted = true;
+}
+
+void UVisualManager::DSwap(int32& a, int32& b)
+{
+	int32 t = a;
+	a = b;
+	b = t;
+	AssignmentsNum += 3;
+}
+
 //My VSwap, to change the position of the vectors on the screen
 void UVisualManager::VSwap(int32 FirstIndex,  int32 SecondIndex)
 {
@@ -184,7 +303,27 @@ void UVisualManager::VSwap(int32 FirstIndex,  int32 SecondIndex)
 	FPlatformProcess::Sleep(SortSpeed);
 	//We are waiting for the Main flow to finish its business, because in small delays, it can work slower than this flow and there will be GIGANT problems
 	IsSwapped.Wait();
-	++SwapsNum;
+	AssignmentsNum+=3;
  	Cells.Swap(FirstIndex, SecondIndex);//Свап елементів в масиві
+}
+
+void UVisualManager::VAssign(int32 Index, int32 Val)
+{
+	TFuture<void>IsAssigned;
+	TPromise<void>SetIsAssigned;
+	IsAssigned = SetIsAssigned.GetFuture();
+
+	//Тільки головний потік може редагувати Анріаловські Сутності
+	AsyncTask(ENamedThreads::GameThread, [&]() {
+		//Swap actors positions
+		Cells[Index]->InitNum(Val);
+		SetIsAssigned.SetValue();
+	});
+	//Delay with help of SortSpeed
+	FPlatformProcess::Sleep(SortSpeed/3);
+	//We are waiting for the Main flow to finish its business, because in small delays, it can work slower than this flow and there will be GIGANT problems
+	IsAssigned.Wait();
+	++AssignmentsNum;
+	//Cells.Swap(FirstIndex, SecondIndex);//Свап елементів в масиві
 }
 
