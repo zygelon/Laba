@@ -5,6 +5,8 @@
 #include "GameFramework/PlayerController.h"
 #include "GenericPlatformProcess.h"
 #include "Async.h"
+#include "ConstructorHelpers.h"
+#include "Engine/Engine.h"
 #include "Future.h"
 #include "ThreadManager.h"
 //просто макрос для більш зручного Debug
@@ -50,7 +52,7 @@ void UVisualManager::SpawnCells()
 void UVisualManager::DestroyCells()
 {//можна я ось це все поясню в живу, тут була проблема, рішення інше не знайшов
 	//Створюється доп потік, що чекає, поки припинеться сортування(основний не можна використовувати, він там частково приймає участь, інакше підвисне)
-	Async<void>(EAsyncExecution::Thread, [this]()
+	Async(EAsyncExecution::Thread, [this]()
 	{
 		bContinueSorting = false;//зупиняємо сортування
 		IsSortingOver.Wait();//чекаємо поки зупинеться
@@ -71,7 +73,7 @@ void UVisualManager::DestroyCells()
 void UVisualManager::StartVisualization()
 {
 	bContinueSorting = true;
-	IsSortingOver = Async<void>(EAsyncExecution::Thread, [this]()
+	IsSortingOver = Async(EAsyncExecution::Thread, [this]()
 	{
 		switch (CurrentSort)
 		{
